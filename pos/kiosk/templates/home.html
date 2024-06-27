@@ -1,13 +1,134 @@
-<!-- File: index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <style>
+        .big-button {
+            /* Căn giữa nút */
+            width: 200px;
+            height: 80px;
+            display: inline-block;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 40px; /* Độ cao của nút, có thể điều chỉnh */
+            padding: 15px 30px; /* Khoảng cách bên trong nút */
+            font-size: 24px; /* Cỡ chữ */
+            font-weight: bold; /* Độ đậm của chữ */
+            text-transform: uppercase; /* Chuyển đổi chữ hoa */
+            color: #ffffff; /* Màu chữ */
+            background-color: #4CAF50; /* Màu nền của nút */
+            border: none; /* Không có đường viền */
+            border-radius: 10px; /* Độ cong của các góc */
+            cursor: pointer; /* Con trỏ chuột thành hình bàn tay khi di chuột qua nút */
+            text-decoration: none; /* Không gạch chân cho văn bản trong nút */
+            overflow: hidden; /* Bổ sung để làm mịn hiệu ứng */
+            transition: all 0.3s ease; /* Hiệu ứng chuyển đổi */
+            }
+    </style>
     <meta charset="UTF-8">
-    <title>Welcome to our app</title>
+    <title>Control ESP Device</title>
+    <script>
+      
+        window.addEventListener("gamepadconnected", function(e) {
+            var gamepad = e.gamepad;
+        });
+
+        function updateGamepad() {
+        var gamepads = navigator.getGamepads();
+        for (var i = 0; i < gamepads.length; i++) {
+            var gamepad = gamepads[i];
+            if (gamepad) {
+                for (var j = 0; j < gamepad.buttons.length; j++) {
+                    var button = gamepad.buttons[j];
+                    if (button.pressed) {
+                        console.log(j)
+                        switch (j) {
+                            case 0:
+                                message='stop'
+                                sendMessage(message)
+                                break;
+                            case 4:
+                                message='tien'
+                                sendMessage(message)
+                                break;
+                            case 5:
+                                message='lui'
+                                sendMessage(message)
+                                break;
+                            case 6:
+                                message='trai'
+                                sendMessage(message)
+                                break;
+                            case 7:
+                                message='phai'
+                                sendMessage(message)
+                                break;
+                        }
+                    // Thực hiện xử lý khi nút được nhấn
+                }
+                }
+                
+            }
+        }
+        requestAnimationFrame(updateGamepad);
+    }
+
+    // Bắt đầu cập nhật gamepad
+    requestAnimationFrame(updateGamepad);
+
+
+        var socket = new WebSocket("ws://192.168.1.29:8000/");
+
+        socket.onopen = function(event) {
+            console.log("WebSocket connected.");
+        };
+
+        socket.onmessage = function(event) {
+            var message = event.data;
+            console.log("Received message from server:", message);
+            // Xử lý dữ liệu nhận được nếu cần
+        };
+
+        socket.onerror = function(error) {
+            console.error("WebSocket error:", error);
+        };
+
+        socket.onclose = function(event) {
+            console.log("WebSocket connection closed.");
+        };
+
+        function sendMessage(message) {
+            socket.send(JSON.stringify({ command: message }));
+            console.log("Sent message to server:", message);
+        }
+        function control_device(button){
+           var message = button.innerHTML;
+           sendMessage(message)
+        }
+
+     
+    </script>
 </head>
 <body>
-    <h1>Welcome to our app</h1>
-    <p>This is a sample template for our Django app.</p>
+    <h1>Control ESP Device</h1>
+    <table>
+        <tr>
+            <td></td>
+            <td><button onclick="control_device(this)"  class="big-button">tien</button></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><button onclick="control_device(this)"  class="big-button">trai</button></td>
+            <td><button onclick="control_device(this)"  class="big-button">stop</button></td>
+            <td><button onclick="control_device(this)"  class="big-button">phai</button></td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><button onclick="control_device(this)"  class="big-button">lui</button></td>
+            <td></td>
+        </tr>
+    </table>  
+    
+    
+    
 </body>
 </html>
