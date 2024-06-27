@@ -1,1 +1,0 @@
-pay_check_activa = False
